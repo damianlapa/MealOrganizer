@@ -5,7 +5,7 @@ from django.views import View
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from MealOrganizer.models import Recipe, Plan, RecipePlan, DayName, Page
+from MealOrganizer.models import Recipe, Plan, RecipePlan, DayName, Page, Ingredient, IngredientWeight
 
 
 class RecipeSearch(View):
@@ -319,3 +319,9 @@ class PlanModifyView(View):
         statement = "{} dodany!".format(name)
 
         return render(request, 'app-edit-schedules.html', locals())
+
+
+class IngredientList(View):
+    def get(self, request):
+        ingredients = Ingredient.objects.all().order_by('name')
+        return render(request, 'ingredients-list.html', locals())
