@@ -110,7 +110,8 @@ class RecipeDetailsView(View):
 
     def get(self, request, rec_id):
         recipe = Recipe.objects.get(id=rec_id)
-        return render(request, "app-recipe-details.html", {"recipe": recipe})
+        ingredients = IngredientWeight.objects.all().filter(recipe_id=recipe.id)
+        return render(request, "app-recipe-details.html", locals())
 
     def post(self, request, rec_id):
         recipe_id = request.POST.get("recipe_id")
