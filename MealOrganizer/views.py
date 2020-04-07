@@ -321,7 +321,19 @@ class PlanModifyView(View):
         return render(request, 'app-edit-schedules.html', locals())
 
 
-class IngredientList(View):
+class IngredientsList(View):
+
     def get(self, request):
-        ingredients = Ingredient.objects.all().order_by('name')
-        return render(request, 'ingredients-list.html', locals())
+        ingredients = Ingredient.objects.all().order_by("name")
+        paginator = Paginator(ingredients, 10)
+
+        page = int(request.GET.get("page", 1))
+        try:
+            plans = paginator.page(page)
+        except PageNotAnInteger:
+            plans = paginator.page(1)
+        except EmptyPage:
+            plans = paginator.page(paginator.num_pages)
+
+        plans = paginator.get_page(page)
+        return render(request, "ingredients-list.html", {"ingredients": ingredients, "page": (page - 1) * 10})
