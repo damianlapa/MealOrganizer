@@ -1,0 +1,13 @@
+{% extends "__base__.html" %}
+
+{% block content %}
+    <h1 style="text-align: center"> Wyszukiwarka przepisów</h1>
+    <h3 style="text-align: center">Podaj nazwę przepisu, który chcesz znaleźć</h3>
+    <form style="text-align: center" method="post" action="">
+        {% csrf_token %}
+        <label for="title" value="recipe">Nazwa przepisu:
+            <input name="title" type="text">
+        </label>
+        <input type="submit" value="Wyszukaj">
+    </form>
+{% endblock %}
