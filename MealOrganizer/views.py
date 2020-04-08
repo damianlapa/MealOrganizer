@@ -14,7 +14,8 @@ class RecipeSearch(View):
 
     def post(self, request):
         recipe_name = request.POST.get("title")
-        recipes = Recipe.objects.all().filter(name=recipe_name)
+        recipes = Recipe.objects.all().filter(name__icontains=recipe_name)
+        counter = recipes.count()
         paginator = Paginator(recipes, 10)
 
         page = int(request.GET.get("page", 1))
@@ -26,7 +27,8 @@ class RecipeSearch(View):
             recipes = paginator.page(paginator.num_pages)
 
         recipes = paginator.get_page(page)
-        return render(request, "app-recipes.html", {"recipes": recipes, "page": (page - 1) * 10})
+        text = recipe_name
+        return render(request, "app-recipes.html", locals(), {"page": (page - 1) * 10})
 
 
 class ContactSlug(View):
@@ -110,7 +112,8 @@ class RecipeDetailsView(View):
 
     def get(self, request, rec_id):
         recipe = Recipe.objects.get(id=rec_id)
-        return render(request, "app-recipe-details.html", {"recipe": recipe})
+        ingredients = IngredientWeight.objects.all().filter(recipe_id=recipe.id)
+        return render(request, "app-recipe-details.html", locals())
 
     def post(self, request, rec_id):
         recipe_id = request.POST.get("recipe_id")
