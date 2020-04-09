@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 
-from MealOrganizer.management.commands_data.few_recipes_data import RECIPES_DATA
-from MealOrganizer.models import Recipe
+from mealorganizer.management.commands_data.few_recipes_data import RECIPES_DATA
+from mealorganizer.models import Recipe
 import random
 
 

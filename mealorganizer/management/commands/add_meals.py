@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from MealOrganizer.models import RecipePlan, Plan, Recipe
+from mealorganizer.models import RecipePlan, Plan, Recipe
 import random
 
 MEALS =(
