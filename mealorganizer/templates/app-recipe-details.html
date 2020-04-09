@@ -23,7 +23,13 @@
             <tr class="d-flex">
                 <th scope="row" class="col-2">Nazwa Przepisu</th>
                 <td class="col-7">
-                    {{ recipe.name }} {{ recipe.calories }}
+                    {{ recipe.name }}
+                </td>
+            </tr>
+            <tr class="d-flex">
+                <th scope="row" class="col-2">kcal</th>
+                <td class="col-7">
+                    {{ recipe.calories }}
                 </td>
             </tr>
             <tr class="d-flex">
@@ -67,11 +73,11 @@
                 <li></li>
             </ul>
             -->
-            <li>
+            <list>
             {% for ingredient in ingredients %}
-                <ul> {{ ingredient.ingredient }}, {{ ingredient.weight_in_grams }}g, {{ ingredient.ingredient_calories }}kcal </ul>
+                <li> {{ ingredient.ingredient }}, {{ ingredient.weight_in_grams }}g, {{ ingredient.ingredient_calories }}kcal </li>
             {% endfor %}
-            </li>
+            </list>
         </div>
 
     </div>

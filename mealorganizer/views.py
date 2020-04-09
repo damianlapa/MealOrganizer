@@ -5,7 +5,7 @@ from django.views import View
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from MealOrganizer.models import Recipe, Plan, RecipePlan, DayName, Page, Ingredient, IngredientWeight
+from mealorganizer.models import Recipe, Plan, RecipePlan, DayName, Page, Ingredient, IngredientWeight
 
 
 class RecipeSearch(View):
@@ -132,18 +132,39 @@ class RecipeDetailsView(View):
 class RecipeAddView(View):
 
     def get(self, request):
-        return render(request, "app-add-recipe.html")
+        ingredients = Ingredient.objects.all()
+        session_value = request.session.get('recipe_ingredients', None)
+        if session_value:
+            del request.session['recipe_ingredients']
+        return render(request, "app-add-recipe.html", locals())
 
     def post(self, request):
+        new_ingredient = request.POST.get('add_ingredient', None)
         name = request.POST.get("name", None)
         description = request.POST.get("description", None)
         ingredients = request.POST.get("ingredients", None)
         preparation_time = request.POST.get("preparation_time", None)
         preparation_method = request.POST.get("preparation_method", None)
 
+        ingredients_list = request.session.get('recipe_ingredients')
+        ingredients = Ingredient.objects.all()
+
+        if new_ingredient:
+            ingredient = request.POST.get('ingredient')
+            weight = request.POST.get('weight')
+            if request.session.get('recipe_ingredients'):
+                ingredients_list.append((ingredient, weight))
+                request.session['recipe_ingredients'] = ingredients_list
+            else:
+                request.session['recipe_ingredients'] = [(ingredient, weight)]
+
+            ingredients_list = request.session.get('recipe_ingredients')
+
+            return render(request, "app-add-recipe.html", locals())
+
         if None in (name, description, ingredients, preparation_time, preparation_method):
             statement = "Brak wszystkich potrzebnych danych do stworzenia przepisu!"
-            return render(request, "app-add-recipe.html", {'statement': statement})
+            return render(request, "app-add-recipe.html", locals())
         elif "" in (name, description, ingredients, preparation_time, preparation_method):
             if preparation_method == "":
                 field = "SPOSÓB PRZYGOTOWANIA"
@@ -156,10 +177,15 @@ class RecipeAddView(View):
             if name == "":
                 field = "Nazwa Przepisu"
             statement = "Wypełnij poprawnie wszystkie pola. Pole {} nie może być puste!".format(field)
-            return render(request, "app-add-recipe.html", {'statement': statement})
+            return render(request, "app-add-recipe.html", locals())
         else:
-            Recipe.objects.create(name=name, description=description, ingredients=ingredients,
-                                  preparation_time=preparation_time)
+            Recipe.objects.create(name=name, description=description, preparation_time=preparation_time)
+            recipe = Recipe.objects.last()
+            for ingredient in ingredients_list:
+                name = Ingredient.objects.get(name=ingredient[0])
+                weight_in_grams = int(ingredient[1])
+                IngredientWeight.objects.create(recipe=recipe, ingredient=name, weight_in_grams=weight_in_grams)
+            del request.session['recipe_ingredients']
             return redirect("/recipe/list")
 
 
