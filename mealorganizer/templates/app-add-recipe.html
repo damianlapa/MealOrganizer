@@ -28,18 +28,18 @@
                     <tr class="d-flex">
                         <th scope="row" class="col-2">Nazwa Przepisu</th>
                         <td class="col-7">
-                            <input name='name' class="w-100 p-1" value="">
+                            <input name='name' class="w-100 p-1" value="{{ name }}">
                         </td>
                     </tr>
                     <tr class="d-flex">
                         <th scope="row" class="col-2">Opis przepisu</th>
                         <td class="col-7"><textarea name='description' class="w-100 p-1"
-                                                    rows="5"></textarea></td>
+                                                    rows="5">{{ description }}</textarea></td>
                     </tr>
                     <tr class="d-flex">
                         <th scope="row" class="col-2">Przygotowanie(minuty)</th>
                         <td class="col-3">
-                            <input class="p-1" name="preparation_time" type="number" value="">
+                            <input class="p-1" name="preparation_time" type="number" value="{{ preparation_time }}">
                         </td>
                     </tr>
                     </tbody>
@@ -54,12 +54,27 @@
                 </div>
                 <div class="row d-flex">
                     <div class="col-5 p-4">
-                        <textarea name="preparation_method" class="w-100 p-1" rows="10"></textarea>
+                        <textarea name="preparation_method" class="w-100 p-1" rows="10">{{ preparation_method }}
+                        </textarea>
                     </div>
                     <div class="col-2"></div>
 
                     <div class="col-5 p-4">
-                        <textarea name="ingredients" class="w-100 p-1" rows="10"></textarea>
+                        Składnik: <select name="ingredient">
+                        {% for ingredient in ingredients %}
+                            <option>{{ ingredient }}</option>
+                        {% endfor %}
+                    </select>
+                        <label>Waga:
+                            <input type="number" name="weight">
+                        </label>
+                        <input type="submit" value="Dodaj" name="add_ingredient">
+                    <br>
+                    <list >
+                        {% for i, j in ingredients_list %}
+                        <li>{{ i }}({{ j }}g)</li>
+                        {% endfor %}
+                    </list>
                     </div>
                 </div>
             </div>

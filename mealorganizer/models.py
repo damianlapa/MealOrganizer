@@ -19,8 +19,13 @@ class DayName(models.Model):
         return self.name
 
 
+class IngredientGroup(models.Model):
+    name = models.CharField(max_length=64)
+
+
 class Ingredient(models.Model):
     name = models.CharField(max_length=64)
+    group = models.ForeignKey(IngredientGroup, on_delete=models.PROTECT)
     calories_in_100_grams = models.IntegerField(default=0)
     carbohydrates = models.DecimalField(max_digits=3, decimal_places=1)
     fats = models.DecimalField(max_digits=3, decimal_places=1)
@@ -84,4 +89,3 @@ class IngredientWeight(models.Model):
     def ingredient_calories(self):
         calories = (self.weight_in_grams * self.ingredient.calories_in_100_grams)/100
         return calories
-

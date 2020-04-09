@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from MealOrganizer.models import DayName
+from mealorganizer.models import DayName
 
 WEEKDAYS = (
     (1, "Poniedziałek"),
