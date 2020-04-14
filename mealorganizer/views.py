@@ -401,3 +401,10 @@ class IngredientsList(View):
 
         plans = paginator.get_page(page)
         return render(request, "ingredients-list.html", {"ingredients": ingredients, "page": (page - 1) * 10})
+
+
+class IngredientDetails(View):
+
+    def get(self, request, ingredient_id):
+        ingredient = IngredientGroup.objects.get(id=ingredient_id)
+        return render(request, 'app-ingredient-details.html', locals())
