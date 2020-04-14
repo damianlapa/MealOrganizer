@@ -1,22 +1,22 @@
 {% extends "__base__.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div class="dashboard-content border-dashed p-3 m-4 view-height">
+    <div class="dashboard-content border-dashed p-3 m-4 view-height">
 
-    <div class="row border-bottom border-3 p-1 m-1">
-        <div class="col noPadding">
-            <h3 class="color-header text-uppercase">LISTA PLANÓW</h3>
+        <div class="row border-bottom border-3 p-1 m-1">
+            <div class="col noPadding">
+                <h3 class="color-header text-uppercase">LISTA PLANÓW</h3>
+            </div>
+            <div class="col d-flex justify-content-end mb-2 noPadding">
+                <a href="/plan/add/"
+                   class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Dodaj
+                    plan</a>
+            </div>
         </div>
-        <div class="col d-flex justify-content-end mb-2 noPadding">
-            <a href="/plan/add/"
-               class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Dodaj
-                plan</a>
-        </div>
-    </div>
 
 
-    <table class="table border-bottom schedules-content">
-        <thead>
+        <table class="table border-bottom schedules-content">
+            <thead>
             <tr class="d-flex">
                 <th class="col-1">ID</th>
                 <th class="col-2">NAZWA</th>
@@ -27,56 +27,60 @@
 
 
             {% for p in plans %}
-             {% with y=forloop.counter %}
-                {% with x=page|add:y %}
-            <tbody class="text-color-lighter">
-            <tr class="d-flex">
-                <td class="col-1"><p>{{ x }}</p></td>
+                {% with y=forloop.counter %}
+                    {% with x=page|add:y %}
+                        <tbody class="text-color-lighter">
+                        <tr class="d-flex">
+                        <td class="col-1"><p>{{ x }}</p></td>
                     {% endwith %}
                 {% endwith %}
-                <td class="col-2">{{p.name}}</td>
-                <td class="col-7">{{p.description}}</td>
-                <td class="col-2 d-flex align-items-center justify-content-center flex-wrap">
-                    <a href="" class="btn btn-danger rounded-0 text-light m-1">Usuń</a>
-                    <a href="/plan/{{p.id}}"
-                       class="btn btn-info rounded-0 text-light m-1">Szczegóły</a>
-                    <a href="/plan/modify/{{ p.id }}"
-                       class="btn btn-warning rounded-0 text-light m-1">Edytuj</a>
-                </td>
+            <td class="col-2">{{ p.name }}</td>
+            <td class="col-7">{{ p.description }}</td>
+            <td class="col-2 d-flex align-items-center justify-content-center flex-wrap">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input name="plan_id" value="{{ p.id }}" type="hidden">
+                    <input type="submit" name="delete" value="Usuń" class="btn btn-danger rounded-0 text-light m-1">
+                </form>
+                <a href="/plan/{{ p.id }}"
+                   class="btn btn-info rounded-0 text-light m-1">Szczegóły</a>
+                <a href="/plan/modify/{{ p.id }}"
+                   class="btn btn-warning rounded-0 text-light m-1">Edytuj</a>
+            </td>
             </tr>
             </tbody>
-        {% endfor %}
+            {% endfor %}
 
             <div class="pagination">
                 <span class="step-links">
 
             {% if plans.has_other_pages %}
-                  <ul class="pagination">
+                <ul class="pagination">
                     {% if plans.has_previous %}
-                      <li><a href="?page={{ plans.previous_page_number }}"> < poprzednia</a></li>
+                        <li><a href="?page={{ plans.previous_page_number }}"> < poprzednia</a></li>
                     {% else %}
-                      <li class="disabled"><span>&laquo;</span></li>
+                        <li class="disabled"><span>&laquo;</span></li>
                     {% endif %}
                     {% for i in plans.paginator.page_range %}
-                      {% if plans.number == i %}
-                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-                      {% else %}
-                        <li><a href="?page={{ i }}">|{{ i }}|</a></li>
-                      {% endif %}
+                        {% if plans.number == i %}
+                            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li><a href="?page={{ i }}">|{{ i }}|</a></li>
+                        {% endif %}
                     {% endfor %}
                     {% if plans.has_next %}
-                      <li><a href="?page={{ plans.next_page_number }}"> następna ></a></li>
+                        <li><a href="?page={{ plans.next_page_number }}"> następna ></a></li>
                     {% else %}
-                      <li class="disabled"><span>&raquo;</span></li>
+                        <li class="disabled"><span>&raquo;</span></li>
                     {% endif %}
                   </ul>
             {% endif %}
             </span>
-         </div>
+            </div>
             <div class="col noPadding step right d-flex justify-content-end mb-2">
                 <a href="/plan/add-recipe"
                    class="btn btn-info rounded-0 pt-0 pb-0 pr-4 pl-4">Dodaj przepis do planu</a></div>
-    </table>
+        </table>
     </div>
-</div>
+    </div>
 {% endblock content %}
