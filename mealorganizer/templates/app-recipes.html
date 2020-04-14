@@ -2,89 +2,92 @@
 {% block title %}{% endblock %}
 {% block content %}
     {% if counter %}
-    <h2 style="text-align: center; color: orangered;">Znaleziono {{ counter }} przepisów</h2>
+        <h2 style="text-align: center; color: orangered;">Znaleziono {{ counter }} przepisów</h2>
         <h3 style="text-align: center; color: #333333;">zawierających frazę: <b>{{ text }}</b></h3>
     {% endif %}
-<div class="dashboard-content border-dashed p-3 m-4 view-height">
+    <div class="dashboard-content border-dashed p-3 m-4 view-height">
 
-    <div class="row border-bottom border-3 p-1 m-1">
-        <div class="col noPadding"><h3 class="color-header text-uppercase">Lista
-            Przepisów</h3></div>
-        <div class="col noPadding d-flex justify-content-end mb-2"><a
-                href="/recipe/add/"
-                class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Dodaj
-            przepis</a></div>
-    </div>
+        <div class="row border-bottom border-3 p-1 m-1">
+            <div class="col noPadding"><h3 class="color-header text-uppercase">Lista
+                Przepisów</h3></div>
+            <div class="col noPadding d-flex justify-content-end mb-2"><a
+                    href="/recipe/add/"
+                    class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Dodaj
+                przepis</a></div>
+        </div>
 
-    <table class="table border-bottom schedules-content">
-        <thead>
-        <tr class="d-flex text-color-darker">
-            <th scope="col" class="col-1">ID</th>
-            <th scope="col" class="col-2">NAZWA</th>
-            <th scope="col" class="col-7">OPIS</th>
-            <th scope="col" class="col-2 center ">AKCJE</th>
-        </tr>
-        </thead>
+        <table class="table border-bottom schedules-content">
+            <thead>
+            <tr class="d-flex text-color-darker">
+                <th scope="col" class="col-1">ID</th>
+                <th scope="col" class="col-2">NAZWA</th>
+                <th scope="col" class="col-7">OPIS</th>
+                <th scope="col" class="col-2 center ">AKCJE</th>
+            </tr>
+            </thead>
 
 
-         {% for r in recipes %}
-             {% with y=forloop.counter %}
-                {% with x=page|add:y %}
-         <tbody class="text-color-lighter">
-        <tr class="d-flex">
-            <td class="col-1"><p>{{ x }}</p></td>
+            {% for r in recipes %}
+                {% with y=forloop.counter %}
+                    {% with x=page|add:y %}
+                        <tbody class="text-color-lighter">
+                        <tr class="d-flex">
+                        <td class="col-1"><p>{{ x }}</p></td>
+                    {% endwith %}
                 {% endwith %}
-             {% endwith %}
             <td class="col-2">
-                {{r.name}} ({{r.votes}} głosy)
+                {{ r.name }} ({{ r.votes }} głosy)
             </td>
             <td class="col-7">
-                {{r.description}}
+                {{ r.description }}
             </td>
-            <td class="col-2 d-flex align-items-right justify-content-center flex-wrap">
-                <a href="#"
-                   class="btn btn-danger rounded-0 text-light m-1">Usuń</a>
-                <a href="/recipe/{{r.id}}/"
-                   class="btn btn-info rounded-0 text-light m-1">Szczegóły</a>
-                <a href="recipe/modify/{{ r.id }}"
-                   class="btn btn-warning rounded-0 text-light m-1">Edytuj</a>
+            <form method="post" action="">
+                {% csrf_token %}
+                <td class="col-2 d-flex align-items-right justify-content-center flex-wrap">
+                    <input type="hidden" name="recipe_id" value="{{ r.id }}">
+                <input type="submit" name="delete" value="Usuń" class="btn btn-danger rounded-0 text-light m-1">
+            </form>
+            <a href="/recipe/{{ r.id }}/"
+               class="btn btn-info rounded-0 text-light m-1">Szczegóły</a>
+            <a href="recipe/modify/{{ r.id }}"
+               class="btn btn-warning rounded-0 text-light m-1">Edytuj</a>
             </td>
-        </tr>
-        </tbody>
+            </tr>
+            </tbody>
 
-         {% endfor %}
+            {% endfor %}
 
-         <div class="pagination">
+            <div class="pagination">
             <span class="step-links">
 
             {% if recipes.has_other_pages %}
-                  <ul class="pagination">
+                <ul class="pagination">
                     {% if recipes.has_previous %}
-                      <li><a href="?page={{ recipes.previous_page_number }}"> < poprzednia</a></li>
+                        <li><a href="?page={{ recipes.previous_page_number }}"> < poprzednia</a></li>
                     {% else %}
-                      <li class="disabled"><span>&laquo;</span></li>
+                        <li class="disabled"><span>&laquo;</span></li>
                     {% endif %}
                     {% for i in recipes.paginator.page_range %}
-                      {% if recipes.number == i %}
-                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-                      {% else %}
-                        <li><a href="?page={{ i }}">|{{ i }}|</a></li>
-                      {% endif %}
+                        {% if recipes.number == i %}
+                            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li><a href="?page={{ i }}">|{{ i }}|</a></li>
+                        {% endif %}
                     {% endfor %}
                     {% if recipes.has_next %}
-                      <li><a href="?page={{ recipes.next_page_number }}"> następna ></a></li>
+                        <li><a href="?page={{ recipes.next_page_number }}"> następna ></a></li>
                     {% else %}
-                      <li class="disabled"><span>&raquo;</span></li>
+                        <li class="disabled"><span>&raquo;</span></li>
                     {% endif %}
                   </ul>
             {% endif %}
             </span>
-         </div>
+            </div>
             <div class="col noPadding step right d-flex justify-content-end mb-2">
                 <a href="/plan/add-recipe"
                    class="btn btn-info rounded-0 pt-0 pb-0 pr-4 pl-4">Dodaj przepis do planu</a></div>
-            </div>
+    </div>
     </div>
     </table>
-</div>
+    </div>
 {% endblock content %}

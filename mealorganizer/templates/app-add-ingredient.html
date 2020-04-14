@@ -1,0 +1,74 @@
+{% extends "__base__.html" %}
+
+{% block title %}Nowy składnik{% endblock %}
+
+{% block content %}
+    <form method="post" action="">
+        {% csrf_token %}
+        <div class="dashboard-content border-dashed p-3 m-4 view-height">
+
+            <div class="mt-4 ml-4 mr-4">
+                <div class="row border-bottom border-3">
+                    <div class="col"><h3 class="color-header text-uppercase">Nowy
+                        składnik</h3></div>
+                    <div class="col d-flex justify-content-end mb-2">
+                        <button type="submit"
+                                class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4">
+                            Zapisz
+                        </button>
+                    </div>
+                </div>
+
+                <div style="color: red; font-weight: bold; text-align: center; font-size: large">
+                    {% if statement %} {{ statement }} {% endif %}
+                </div>
+
+                <table class="table borderless">
+                    <tbody>
+                    <tr class="d-flex">
+                        <th scope="row" class="col-2">Nazwa Składnika</th>
+                        <td class="col-7">
+                            <input name='name' class="w-100 p-1">
+                        </td>
+                    <tr class="d-flex">
+                        <th scope="row" class="col-2">Grupa produktów</th>
+                        <td class="col-3">
+                            <select name="group">
+                                {% for g in groups %}
+                                    <option>{{ g.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="d-flex">
+                        <th scope="row" class="col-2">Liczba kalorii w 100g produktu</th>
+                        <td class="col-3">
+                            <input class="p-1" name="calories" type="number">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="row d-flex">
+                    <div class="col-5 border-bottom border-3"><h3
+                            class="text-uppercase">Wartości odżywcze</h3></div>
+                </div>
+                <div class="row d-flex">
+                    <div class="col-5 p-4">
+                        <table>
+                            <tbody>
+                            <tr>
+                                <th>Białka</th>
+                                <th>Węglowodany</th>
+                                <th>Tłuszcze</th>
+                            </tr>
+                            <tr>
+                                <td><input type="number" step="0.1" required name="proteins"></td>
+                                <td><input type="number" step="0.1" required name="carbohydrates"></td>
+                                <td><input type="number" step="0.1" required name="fats"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+    </form>
+{% endblock content %}

@@ -54,8 +54,8 @@
                 </div>
                 <div class="row d-flex">
                     <div class="col-5 p-4">
-                        <textarea name="preparation_method" class="w-100 p-1" rows="10">{{ preparation_method }}
-                        </textarea>
+                        <textarea name="preparation_method" class="w-100 p-1"
+                                  rows="10">{{ preparation_method }}</textarea>
                     </div>
                     <div class="col-2"></div>
 
@@ -69,12 +69,12 @@
                             <input type="number" name="weight">
                         </label>
                         <input type="submit" value="Dodaj" name="add_ingredient">
-                    <br>
-                    <list >
-                        {% for i, j in ingredients_list %}
-                        <li>{{ i }}({{ j }}g)</li>
-                        {% endfor %}
-                    </list>
+                        <br>
+                        <list>
+                            {% for i, j in ingredients_list %}
+                                <li>{{ i }}({{ j }}g)</li>
+                            {% endfor %}
+                        </list>
                     </div>
                 </div>
             </div>

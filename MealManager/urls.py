@@ -16,12 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from mealorganizer.views import RecipeAddView, RecipeDetailsView, RecipeListView, RecipeModifyView
-from mealorganizer.views import PlanListView, PlanAddRecipeView, RecipeSearch, IngredientsList
-from mealorganizer.views import MainPage, DashboardView, NewPlanView, PlanDetailsView, ContactSlug, AboutSlug, PlanModifyView
-
+from mealorganizer.views import PlanListView, PlanAddRecipeView, RecipeSearch, IngredientsList, AddIngredient
+from mealorganizer.views import MainPage, DashboardView, NewPlanView, PlanDetailsView, ContactSlug, AboutSlug, \
+    PlanModifyView
 
 urlpatterns = [
     path('ingredient/list', IngredientsList.as_view(), name='ingredient-list'),
+    path('ingredient/add', AddIngredient.as_view(), name='add-ingredient'),
     path('search', RecipeSearch.as_view()),
     path('contact', ContactSlug.as_view()),
     path('about', AboutSlug.as_view()),
@@ -40,5 +41,4 @@ urlpatterns = [
     path('plan/<int:plan_id>/', PlanDetailsView.as_view()),
     path('plan/modify/<int:plan_id>', PlanModifyView.as_view()),
     path('plan/add-recipe/', PlanAddRecipeView.as_view()),
-    ]
-
+]
