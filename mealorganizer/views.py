@@ -82,7 +82,7 @@ class DashboardView(View):
         plan_count = Plan.objects.count()
         recipe_count = Recipe.objects.count()
 
-        last_plan = Plan.objects.all().order_by('created')[0]
+        last_plan = Plan.objects.all().order_by('-created', '-id')[0]
         last_plan_meals = RecipePlan.objects.filter(plan_id=last_plan.id).order_by('order')
         days = DayName.objects.all()
 
@@ -311,6 +311,8 @@ class PlanAddRecipeView(View):
             statement = "Potrzeba wszystkich danych do utworzenia posiłku!"
             return render(request, 'app-schedules-meal-recipe.html', locals())
 
+        #return HttpResponse('*{}*'.format(plan_name))
+
         plan = Plan.objects.get(name=plan_name)
         recipe = Recipe.objects.get(name=recipe_name)
         order = int(meal_nr)
@@ -406,5 +408,5 @@ class IngredientsList(View):
 class IngredientDetails(View):
 
     def get(self, request, ingredient_id):
-        ingredient = IngredientGroup.objects.get(id=ingredient_id)
+        ingredient = Ingredient.objects.get(id=ingredient_id)
         return render(request, 'app-ingredient-details.html', locals())

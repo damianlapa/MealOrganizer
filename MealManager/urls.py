@@ -23,7 +23,7 @@ from mealorganizer.views import MainPage, DashboardView, NewPlanView, PlanDetail
 urlpatterns = [
     path('ingredient/list', IngredientsList.as_view(), name='ingredient-list'),
     path('ingredient/add', AddIngredient.as_view(), name='add-ingredient'),
-    path('ingredient/<int: ingredient_id>/', name='ingredient-details'),
+    path('ingredient/<int:ingredient_id>/', IngredientDetails.as_view(), name='ingredient-details'),
     path('search', RecipeSearch.as_view()),
     path('contact', ContactSlug.as_view()),
     path('about', AboutSlug.as_view()),
