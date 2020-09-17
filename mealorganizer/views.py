@@ -78,12 +78,16 @@ class MainPage(View):
 class DashboardView(View):
 
     def get(self, request):
-        ctx = {"actual_date": datetime.now()}
+        actual_date = datetime.now()
         plan_count = Plan.objects.count()
         recipe_count = Recipe.objects.count()
 
-        last_plan = Plan.objects.all().order_by('-created', '-id')[0]
-        last_plan_meals = RecipePlan.objects.filter(plan_id=last_plan.id).order_by('order')
+        if Plan.objects.all():
+            last_plan = Plan.objects.all().order_by('-created', '-id')[0]
+            last_plan_meals = RecipePlan.objects.filter(plan_id=last_plan.id).order_by('order')
+        else:
+            last_plan = None
+
         days = DayName.objects.all()
 
         return render(request, "dashboard.html", locals())
@@ -93,7 +97,7 @@ class DashboardView(View):
 class RecipeListView(View):
     def get(self, request):
         recipes = Recipe.objects.all().order_by("-votes", "-created")
-        paginator = Paginator(recipes, 10)
+        paginator = Paginator(recipes, 3)
 
         page = int(request.GET.get("page", 1))
         try:
@@ -157,16 +161,25 @@ class RecipeAddView(View):
 
         if new_ingredient:
             ingredient = request.POST.get('ingredient')
-            weight = request.POST.get('weight')
-            if request.session.get('recipe_ingredients'):
-                ingredients_list.append((ingredient, weight))
-                request.session['recipe_ingredients'] = ingredients_list
-            else:
-                request.session['recipe_ingredients'] = [(ingredient, weight)]
 
-            ingredients_list = request.session.get('recipe_ingredients')
+            try:
+                weight = int(request.POST.get('weight'))
 
-            return render(request, "app-add-recipe.html", locals())
+                if request.session.get('recipe_ingredients'):
+                    ingredients_list.append((ingredient, weight))
+                    request.session['recipe_ingredients'] = ingredients_list
+                else:
+                    request.session['recipe_ingredients'] = [(ingredient, weight)]
+
+                ingredients_list = request.session.get('recipe_ingredients')
+
+                return render(request, "app-add-recipe.html", locals())
+
+            except Exception as e:
+                statement = "Waga produktu musi być większa niż 0"
+                return render(request, "app-add-recipe.html", locals())
+
+
 
         if None in (name, description, ingredients, preparation_time, preparation_method):
             statement = "Brak wszystkich potrzebnych danych do stworzenia przepisu!"

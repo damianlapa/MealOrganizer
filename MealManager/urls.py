@@ -32,7 +32,7 @@ urlpatterns = [
     path('main/', DashboardView.as_view()),
     path('recipe/<int:rec_id>/', RecipeDetailsView.as_view()),
     path('recipe/list/', RecipeListView.as_view()),
-    path('recipe/add/', RecipeAddView.as_view()),
+    path('recipe/add/', RecipeAddView.as_view(), name='recipe-add'),
     path('recipe/modify/<int:rec_id>/', RecipeModifyView.as_view()),
     path('plan/list/', PlanListView.as_view()),
     path('plan/add/', NewPlanView.as_view()),
