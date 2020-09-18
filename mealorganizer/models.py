@@ -22,8 +22,11 @@ class DayName(models.Model):
 class IngredientGroup(models.Model):
     name = models.CharField(max_length=64)
 
+    def __str__(self):
+        return self.name
 
-class Ingredient(models.Model):
+
+class Ingredient(models.Model): 
     name = models.CharField(max_length=64)
     group = models.ForeignKey(IngredientGroup, on_delete=models.PROTECT)
     calories_in_100_grams = models.IntegerField(default=0)
@@ -42,6 +45,7 @@ class Recipe(models.Model):
     created = models.DateField(auto_now_add=True)
     updated = models.DateField(auto_now=True)
     preparation_time = models.IntegerField()
+    preparation_method = models.TextField()
     votes = models.IntegerField(default=0)
 
     def __str__(self):
@@ -82,7 +86,7 @@ class Page(models.Model):
 
 
 class IngredientWeight(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
     weight_in_grams = models.IntegerField()
 

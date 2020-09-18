@@ -1,10 +1,3 @@
-RECIPES_DATA = {
-    ('Kurczak z warzywami', 'kurczak, warzywa', 'Kurczaka upiecz, warzywa ugotuj', 30),
-    ('Ryba z frytkami', 'ryba, ziemniaki, olej', 'Obierz ziemniaki, usmaz frytki, usmaz rybe', 45),
-    ('Makaron serowo-brokulowy', 'makaron, ser, brokul', 'Ugotuj makaron, dodaj ser i brokul', 35),
-    ('Parowki z chlebem', 'parowki, chleb', 'Ugotuj parowki i zjedz z chlebem', 10)
-}
-
 PLAN_DATA = {
     ('Plan jarski na bezmięsny', '''Pojęcie kuchnia wegetariańska określa pożywienie, które ani nie zawiera mięsa, 
     ani nie zostało przygotowane na bazie pochodzącej z mięsa (np. na rosole drobiowym). Laktoowowegetarianie 

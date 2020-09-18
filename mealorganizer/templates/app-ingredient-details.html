@@ -1,0 +1,68 @@
+{% extends "__base__.html" %}
+
+{% block title %}Nowy składnik{% endblock %}
+
+{% block content %}
+    <div class="dashboard-content border-dashed p-3 m-4 view-height">
+
+        <div class="mt-4 ml-4 mr-4">
+            <div class="row border-bottom border-3">
+                <div class="col"><h3 class="color-header text-uppercase">Nowy
+                    składnik</h3></div>
+                <div class="col d-flex justify-content-end mb-2">
+                    <button type="submit"
+                            class="btn btn-color rounded-0 pt-0 pb-0 pr-4 pl-4">
+                        Zapisz
+                    </button>
+                </div>
+            </div>
+
+            <div style="color: red; font-weight: bold; text-align: center; font-size: large">
+                {% if statement %} {{ statement }} {% endif %}
+            </div>
+
+            <table class="table borderless">
+                <tbody>
+                <tr class="d-flex">
+                    <th scope="row" class="col-2">Nazwa Składnika</th>
+                    <td class="col-7">
+                        {{ ingredient.name }}
+                    </td>
+                <tr class="d-flex">
+                    <th scope="row" class="col-2">Grupa produktów</th>
+                    <td class="col-3">
+                        {{ ingredient.group }}
+                    </td>
+                </tr>
+                <tr class="d-flex">
+                    <th scope="row" class="col-2">Liczba kalorii w 100g produktu</th>
+                    <td class="col-3">
+                        {{ ingredient.calories_in_100_grams }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="row d-flex">
+                <div class="col-5 border-bottom border-3"><h3
+                        class="text-uppercase">Wartości odżywcze</h3></div>
+            </div>
+            <div class="row d-flex">
+                <div class="col-5 p-4">
+                    <table>
+                        <tbody>
+                        <tr>
+                            <th>Białka</th>
+                            <th>Węglowodany</th>
+                            <th>Tłuszcze</th>
+                        </tr>
+                        <tr>
+                            <td>{{ ingredient.proteins }}</td>
+                            <td>{{ ingredient.carbohydrates }}</td>
+                            <td>{{ ingredient.fats }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+{% endblock content %}

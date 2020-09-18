@@ -5,7 +5,7 @@ from django.views import View
 from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from mealorganizer.models import Recipe, Plan, RecipePlan, DayName, Page, Ingredient, IngredientWeight
+from mealorganizer.models import Recipe, Plan, RecipePlan, DayName, Page, Ingredient, IngredientWeight, IngredientGroup
 
 
 class RecipeSearch(View):
@@ -78,12 +78,16 @@ class MainPage(View):
 class DashboardView(View):
 
     def get(self, request):
-        ctx = {"actual_date": datetime.now()}
+        actual_date = datetime.now()
         plan_count = Plan.objects.count()
         recipe_count = Recipe.objects.count()
 
-        last_plan = Plan.objects.all().order_by('created')[0]
-        last_plan_meals = RecipePlan.objects.filter(plan_id=last_plan.id).order_by('order')
+        if Plan.objects.all():
+            last_plan = Plan.objects.all().order_by('-created', '-id')[0]
+            last_plan_meals = RecipePlan.objects.filter(plan_id=last_plan.id).order_by('order')
+        else:
+            last_plan = None
+
         days = DayName.objects.all()
 
         return render(request, "dashboard.html", locals())
@@ -93,7 +97,7 @@ class DashboardView(View):
 class RecipeListView(View):
     def get(self, request):
         recipes = Recipe.objects.all().order_by("-votes", "-created")
-        paginator = Paginator(recipes, 10)
+        paginator = Paginator(recipes, 3)
 
         page = int(request.GET.get("page", 1))
         try:
@@ -105,6 +109,12 @@ class RecipeListView(View):
 
         recipes = paginator.get_page(page)
         return render(request, "app-recipes.html", {"recipes": recipes, "page": (page - 1) * 10})
+
+    def post(self, request):
+        recipe_id = request.POST.get('recipe_id')
+        if recipe_id:
+            Recipe.objects.get(id=recipe_id).delete()
+        return redirect('/recipe/list/')
 
 
 # przepis o podanym id
@@ -151,16 +161,25 @@ class RecipeAddView(View):
 
         if new_ingredient:
             ingredient = request.POST.get('ingredient')
-            weight = request.POST.get('weight')
-            if request.session.get('recipe_ingredients'):
-                ingredients_list.append((ingredient, weight))
-                request.session['recipe_ingredients'] = ingredients_list
-            else:
-                request.session['recipe_ingredients'] = [(ingredient, weight)]
 
-            ingredients_list = request.session.get('recipe_ingredients')
+            try:
+                weight = int(request.POST.get('weight'))
 
-            return render(request, "app-add-recipe.html", locals())
+                if request.session.get('recipe_ingredients'):
+                    ingredients_list.append((ingredient, weight))
+                    request.session['recipe_ingredients'] = ingredients_list
+                else:
+                    request.session['recipe_ingredients'] = [(ingredient, weight)]
+
+                ingredients_list = request.session.get('recipe_ingredients')
+
+                return render(request, "app-add-recipe.html", locals())
+
+            except Exception as e:
+                statement = "Waga produktu musi być większa niż 0"
+                return render(request, "app-add-recipe.html", locals())
+
+
 
         if None in (name, description, ingredients, preparation_time, preparation_method):
             statement = "Brak wszystkich potrzebnych danych do stworzenia przepisu!"
@@ -179,13 +198,15 @@ class RecipeAddView(View):
             statement = "Wypełnij poprawnie wszystkie pola. Pole {} nie może być puste!".format(field)
             return render(request, "app-add-recipe.html", locals())
         else:
-            Recipe.objects.create(name=name, description=description, preparation_time=preparation_time)
+            Recipe.objects.create(name=name, description=description, preparation_time=preparation_time,
+                                  preparation_method=preparation_method)
             recipe = Recipe.objects.last()
-            for ingredient in ingredients_list:
-                name = Ingredient.objects.get(name=ingredient[0])
-                weight_in_grams = int(ingredient[1])
-                IngredientWeight.objects.create(recipe=recipe, ingredient=name, weight_in_grams=weight_in_grams)
-            del request.session['recipe_ingredients']
+            if ingredients_list:
+                for ingredient in ingredients_list:
+                    name = Ingredient.objects.get(name=ingredient[0])
+                    weight_in_grams = int(ingredient[1])
+                    IngredientWeight.objects.create(recipe=recipe, ingredient=name, weight_in_grams=weight_in_grams)
+                del request.session['recipe_ingredients']
             return redirect("/recipe/list")
 
 
@@ -250,6 +271,12 @@ class PlanListView(View):
         plans = paginator.get_page(page)
         return render(request, "app-schedules.html", {"plans": plans, "page": (page - 1) * 10})
 
+    def post(self, request):
+        plan_id = request.POST.get('plan_id')
+        if plan_id:
+            Plan.objects.get(id=plan_id).delete()
+        return redirect('/plan/list')
+
 
 # dodanie nowego planu
 class NewPlanView(View):
@@ -296,6 +323,8 @@ class PlanAddRecipeView(View):
         if None in (plan_name, recipe_name, meal_name, meal_nr, day):
             statement = "Potrzeba wszystkich danych do utworzenia posiłku!"
             return render(request, 'app-schedules-meal-recipe.html', locals())
+
+        #return HttpResponse('*{}*'.format(plan_name))
 
         plan = Plan.objects.get(name=plan_name)
         recipe = Recipe.objects.get(name=recipe_name)
@@ -350,6 +379,27 @@ class PlanModifyView(View):
         return render(request, 'app-edit-schedules.html', locals())
 
 
+class AddIngredient(View):
+
+    def get(self, request):
+        groups = IngredientGroup.objects.all()
+        return render(request, 'app-add-ingredient.html', locals())
+
+    def post(self, request):
+        name = request.POST.get('name')
+        group = IngredientGroup.objects.get(name=request.POST.get('group'))
+        calories = request.POST.get('calories')
+        proteins = round(float(request.POST.get('proteins')), 1)
+        carbohydrates = round(float(request.POST.get('carbohydrates')), 1)
+        fats = round(float(request.POST.get('fats')), 1)
+
+        Ingredient.objects.create(name=name, calories_in_100_grams=calories, proteins=proteins,
+                                  carbohydrates=carbohydrates, fats=fats, group=group)
+
+        return redirect('/ingredient/list')
+
+
+
 class IngredientsList(View):
 
     def get(self, request):
@@ -366,3 +416,10 @@ class IngredientsList(View):
 
         plans = paginator.get_page(page)
         return render(request, "ingredients-list.html", {"ingredients": ingredients, "page": (page - 1) * 10})
+
+
+class IngredientDetails(View):
+
+    def get(self, request, ingredient_id):
+        ingredient = Ingredient.objects.get(id=ingredient_id)
+        return render(request, 'app-ingredient-details.html', locals())
